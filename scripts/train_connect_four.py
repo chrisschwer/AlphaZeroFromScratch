@@ -10,7 +10,12 @@ WEIGHTS_PATH = "connect_four_weights.pt"
 
 def main():
     game = ConnectFour()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     model = ResNet(game, num_res_blocks=9, num_hidden=128, device=device)
     if os.path.exists(WEIGHTS_PATH):
         model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=device))
