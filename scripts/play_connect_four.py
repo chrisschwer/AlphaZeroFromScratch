@@ -1,8 +1,12 @@
+import os
 import numpy as np
 import torch
 from alphazero.connect_four import ConnectFour
 from alphazero.net import ResNet
 from alphazero.mcts import MCTS
+
+
+WEIGHTS_PATH = "connect_four_weights.pt"
 
 
 def main():
@@ -18,6 +22,8 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, num_res_blocks=9, num_hidden=128, device=device)
+    if os.path.exists(WEIGHTS_PATH):
+        model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=device))
     model.eval()
     mcts = MCTS(game, args, model)
 
